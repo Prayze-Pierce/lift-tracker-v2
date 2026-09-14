@@ -1,0 +1,338 @@
+/* ================================
+   GLOBAL
+================================ */
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+
+    background: #0d0d0d;
+    color: #ffffff;
+
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+}
+
+
+/* ================================
+   APP
+================================ */
+
+.app {
+    width: 100%;
+    max-width: 600px;
+
+    margin: 0 auto;
+
+    padding:
+        24px
+        18px
+        60px;
+}
+
+
+/* ================================
+   HEADER
+================================ */
+
+header {
+    margin-bottom: 28px;
+}
+
+.app-label {
+    margin: 0 0 8px;
+
+    font-size: 12px;
+    font-weight: 700;
+
+    letter-spacing: 2px;
+
+    color: #8a8a8a;
+}
+
+h1 {
+    margin: 0;
+
+    font-size: 32px;
+    line-height: 1.1;
+}
+
+#current-date {
+    margin-top: 8px;
+
+    color: #999999;
+}
+
+
+/* ================================
+   WORKOUT SECTIONS
+================================ */
+
+.workout-section {
+    margin-bottom: 30px;
+}
+
+.section-title {
+    margin-bottom: 12px;
+
+    font-size: 18px;
+
+    color: #aaaaaa;
+}
+
+
+/* ================================
+   EXERCISE CARD
+================================ */
+
+.exercise-card {
+    margin-bottom: 14px;
+
+    padding: 16px;
+
+    background: #181818;
+
+    border:
+        1px
+        solid
+        #292929;
+
+    border-radius: 14px;
+}
+
+.exercise-name {
+    margin:
+        0
+        0
+        8px;
+
+    font-size: 18px;
+}
+
+.exercise-target {
+    margin: 0;
+
+    font-size: 15px;
+
+    color: #bdbdbd;
+}
+
+.exercise-note {
+    margin-top: 8px;
+
+    font-size: 14px;
+
+    color: #8f8f8f;
+}
+
+
+/* ================================
+   WEIGHT INPUT
+================================ */
+
+.weight-area {
+    margin-top: 16px;
+}
+
+.weight-label {
+    margin:
+        0
+        0
+        6px;
+
+    font-size: 13px;
+
+    color: #8f8f8f;
+}
+
+.weight-input-row {
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+}
+
+.weight-input {
+    width: 120px;
+
+    padding:
+        10px
+        12px;
+
+    background: #101010;
+
+    color: #ffffff;
+
+    border:
+        1px
+        solid
+        #3a3a3a;
+
+    border-radius: 8px;
+
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.weight-input:focus {
+    outline:
+        2px
+        solid
+        #777777;
+
+    outline-offset: 1px;
+}
+
+.unit-label {
+    font-size: 15px;
+
+    color: #aaaaaa;
+}
+
+
+/* ================================
+   PLATE CALCULATOR
+================================ */
+
+.plate-display {
+    margin-top: 10px;
+
+    padding:
+        10px
+        12px;
+
+    background: #101010;
+
+    border-radius: 8px;
+
+    font-size: 14px;
+
+    color: #d0d0d0;
+}
+
+
+/* ================================
+   DIFFICULTY
+================================ */
+
+.difficulty-area {
+    margin-top: 20px;
+
+    padding-top: 16px;
+
+    border-top:
+        1px
+        solid
+        #292929;
+}
+
+.difficulty-label {
+    margin:
+        0
+        0
+        9px;
+
+    font-size: 14px;
+
+    color: #aaaaaa;
+}
+
+.difficulty-buttons {
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, 1fr);
+
+    gap: 6px;
+}
+
+.difficulty-button {
+    min-height: 44px;
+
+    padding:
+        10px
+        4px;
+
+    background: #242424;
+
+    color: #dddddd;
+
+    border:
+        1px
+        solid
+        #353535;
+
+    border-radius: 8px;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+.difficulty-button:hover {
+    background: #303030;
+}
+
+.difficulty-button.selected {
+    background: #ffffff;
+
+    color: #111111;
+
+    border-color: #ffffff;
+}
+
+
+/* ================================
+   REST DAY
+================================ */
+
+.rest-day {
+    padding:
+        30px
+        20px;
+
+    text-align: center;
+
+    background: #181818;
+
+    border-radius: 14px;
+
+    color: #aaaaaa;
+}
+/* ================================
+   FINISH WORKOUT
+================================ */
+
+.finish-workout-button {
+    width: 100%;
+
+    margin-top: 10px;
+    padding: 16px;
+
+    background: #ffffff;
+    color: #111111;
+
+    border: none;
+    border-radius: 12px;
+
+    font-size: 17px;
+    font-weight: 700;
+
+    cursor: pointer;
+}
+
+.finish-workout-button:hover {
+    background: #dddddd;
+}
+
+.finish-workout-button:active {
+    transform: scale(0.98);
+}
