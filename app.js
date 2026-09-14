@@ -1,11 +1,21 @@
-// ============================================================
-// LIFT TRACKER
-// ============================================================
+const STORAGE_KEY = "liftTrackerV2";
 
+const DAYS = [
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+    "Sunday"
+];
 
-// ============================================================
-// CONFIGURATION
-// ============================================================
+const RATINGS = [
+    "Easy",
+    "Good",
+    "Barely",
+    "Failed"
+];
 
 const BAR_WEIGHT = 45;
 
@@ -18,1729 +28,2564 @@ const AVAILABLE_PLATES = [
 ];
 
 
-// Name used to store our data inside the browser.
-const STORAGE_KEY = "liftTrackerData";
+const pageTitle =
+    document.getElementById("page-title");
 
+const pageSubtitle =
+    document.getElementById("page-subtitle");
 
-// ============================================================
-// WORKOUT DATA
-//
-// IMPORTANT:
-// These are DEFAULT values.
-//
-// Once you change a target inside the app, the current value
-// will be stored in localStorage.
-//
-// Example:
-//
-// Source code default: 165
-// You change it to:    170
-//
-// The app will use 170 until saved data is cleared.
-// ============================================================
+const appContainer =
+    document.getElementById("app-container");
 
-const workoutSchedule = {
+const menuButton =
+    document.getElementById("menu-button");
 
-    // --------------------------------------------------------
-    // MONDAY
-    // --------------------------------------------------------
 
-    monday: {
+/* =========================================================
+   DATA
+========================================================= */
 
-        name: "Chest / Tris",
+function createDefaultData() {
 
-        sections: [
+    return {
+        setupComplete: false,
+        name: "",
+        trainingDays: [],
+        workouts: {},
+        ratings: {}
+    };
+}
 
-            {
-                name: "Neck Work",
 
-                exercises: [
+function loadData() {
 
-                    {
-                        name: "Neck Curls",
-                        sets: 2,
-                        minReps: 20,
-                        maxReps: 20
-                    },
-
-                    {
-                        name: "Chin Tucks",
-                        sets: 2,
-                        minReps: 20,
-                        maxReps: 20
-                    }
-
-                ]
-            },
-
-
-            {
-                name: "Strength Circuit",
-
-                exercises: [
-
-                    {
-                        id: "mon-incline-smith",
-
-                        name: "Incline Smith Press",
-
-                        sets: 2,
-                        minReps: 5,
-                        maxReps: 8,
-
-                        weight: 165,
-                        unit: "lb",
-
-                        plateLoaded: true
-                    },
-
-                    {
-                        id: "mon-chest-press",
-
-                        name: "Chest Press",
-
-                        sets: 2,
-                        minReps: 6,
-                        maxReps: 10,
-
-                        weight: 130,
-                        unit: "lb",
-
-                        note: "Back: 3 | Seat: 3"
-                    },
-
-                    {
-                        id: "mon-pec-deck",
-
-                        name: "Pec Deck",
-
-                        sets: 2,
-                        minReps: 8,
-                        maxReps: 12,
-
-                        weight: 110,
-                        unit: "lb",
-
-                        note: "Bars: 5 | Seat: 1"
-                    },
-
-                    {
-                        id: "mon-triceps-pushdown",
-
-                        name: "Cable Triceps Pushdown",
-
-                        sets: 2,
-                        minReps: 8,
-                        maxReps: 12,
-
-                        weight: 7,
-                        unit: "setting"
-                    },
-
-                    {
-                        id: "mon-overhead-triceps",
-
-                        name: "Overhead Cable Triceps Extension",
-
-                        sets: 2,
-                        minReps: 8,
-                        maxReps: 12,
-
-                        weight: 7,
-                        unit: "setting"
-                    }
-
-                ]
-            }
-
-        ]
-    },
-
-
-    // --------------------------------------------------------
-    // TUESDAY
-    // --------------------------------------------------------
-
-    tuesday: {
-
-        name: "Back / Bis",
-
-        sections: [
-
-            {
-                name: "Neck Work",
-
-                exercises: [
-
-                    {
-                        name: "Neck Curls",
-                        sets: 2,
-                        minReps: 20,
-                        maxReps: 20
-                    },
-
-                    {
-                        name: "Chin Tucks",
-                        sets: 2,
-                        minReps: 20,
-                        maxReps: 20
-                    }
-
-                ]
-            },
-
-
-            {
-                name: "Strength Circuit",
-
-                exercises: [
-
-                    {
-                        id: "tue-lat-pulldown",
-
-                        name: "Lat Pulldown",
-
-                        sets: 2,
-                        minReps: 6,
-                        maxReps: 10,
-
-                        weight: 275,
-                        unit: "lb"
-                    },
-
-                    {
-                        id: "tue-chest-supported-row",
-
-                        name: "Chest-Supported Row",
-
-                        sets: 2,
-                        minReps: 6,
-                        maxReps: 10,
-
-                        weight: 225,
-                        unit: "lb"
-                    },
-
-                    {
-                        id: "tue-single-arm-pulldown",
-
-                        name: "Single-Arm Cable Lat Pulldown",
-
-                        sets: 2,
-                        minReps: 8,
-                        maxReps: 12,
-
-                        weight: 4,
-                        unit: "setting"
-                    },
-
-                    {
-                        id: "tue-bb-curl",
-
-                        name: "BB Curl",
-
-                        sets: 2,
-                        minReps: 6,
-                        maxReps: 10,
-
-                        weight: 135,
-                        unit: "lb"
-                    },
-
-                    {
-                        id: "tue-incline-db-curl",
-
-                        name: "Incline DB Curl",
-
-                        sets: 2,
-                        minReps: 8,
-                        maxReps: 12,
-
-                        weight: 135,
-                        unit: "lb"
-                    }
-
-                ]
-            }
-
-        ]
-    },
-
-
-    // --------------------------------------------------------
-    // WEDNESDAY
-    // --------------------------------------------------------
-
-    wednesday: {
-
-        name: "Legs",
-
-        sections: [
-
-            {
-                name: "Neck Work",
-
-                exercises: [
-
-                    {
-                        name: "Neck Curls",
-                        sets: 2,
-                        minReps: 20,
-                        maxReps: 20
-                    },
-
-                    {
-                        name: "Chin Tucks",
-                        sets: 2,
-                        minReps: 20,
-                        maxReps: 20
-                    }
-
-                ]
-            },
-
-
-            {
-                name: "Strength Circuit",
-
-                exercises: [
-
-                    {
-                        id: "wed-leg-press",
-
-                        name: "Leg Press",
-
-                        sets: 2,
-                        minReps: 6,
-                        maxReps: 10,
-
-                        // 8 total 45 lb plates
-                        weight: 360,
-                        unit: "lb",
-
-                        plateLoaded: true,
-
-                        // No 45 lb bar on the leg press.
-                        barWeight: 0
-                    },
-
-                    {
-                        id: "wed-leg-extension",
-
-                        name: "Leg Extension",
-
-                        sets: 2,
-                        minReps: 8,
-                        maxReps: 10,
-
-                        weight: 145,
-                        unit: "setting"
-                    },
-
-                    {
-                        id: "wed-leg-curl",
-
-                        name: "Leg Curl",
-
-                        sets: 2,
-                        minReps: 8,
-                        maxReps: 10,
-
-                        weight: 115,
-                        unit: "setting"
-                    }
-
-                ]
-            }
-
-        ]
-    },
-
-
-    // --------------------------------------------------------
-    // THURSDAY
-    // --------------------------------------------------------
-
-    thursday: {
-
-        name: "Shoulders / Arms",
-
-        sections: [
-
-            {
-                name: "Neck Work",
-
-                exercises: [
-
-                    {
-                        name: "Neck Curls",
-                        sets: 2,
-                        minReps: 15,
-                        maxReps: 15
-                    },
-
-                    {
-                        name: "Chin Tucks",
-                        sets: 2,
-                        minReps: 15,
-                        maxReps: 15
-                    }
-
-                ]
-            },
-
-
-            {
-                name: "Strength Circuit",
-
-                exercises: [
-
-                    {
-                        id: "thu-shoulder-press",
-
-                        name: "Machine Shoulder Press",
-
-                        sets: 2,
-                        minReps: 6,
-                        maxReps: 10,
-
-                        weight: 160,
-                        unit: "setting"
-                    },
-
-                    {
-                        id: "thu-lateral-raise",
-
-                        name: "Cable Lateral Raise",
-
-                        sets: 2,
-                        minReps: 8,
-                        maxReps: 15,
-
-                        weight: 60,
-                        unit: "setting"
-                    },
-
-                    {
-                        id: "thu-reverse-pec-deck",
-
-                        name: "Reverse Pec Deck",
-
-                        sets: 2,
-                        minReps: 8,
-                        maxReps: 10,
-
-                        weight: 12,
-                        unit: "setting"
-                    },
-
-                    {
-                        id: "thu-preacher-curl",
-
-                        name: "Preacher Curl",
-
-                        sets: 2,
-                        minReps: 8,
-                        maxReps: 12,
-
-                        weight: 50,
-                        unit: "lb"
-                    },
-
-                    {
-                        id: "thu-hammer-curl",
-
-                        name: "Hammer Curl",
-
-                        sets: 2,
-                        minReps: 8,
-                        maxReps: 12,
-
-                        weight: 40,
-                        unit: "lb"
-                    },
-
-                    {
-                        id: "thu-rope-pushdown",
-
-                        name: "Rope Pushdown",
-
-                        sets: 2,
-                        minReps: 8,
-                        maxReps: 12,
-
-                        weight: 40,
-                        unit: "setting"
-                    },
-
-                    {
-                        id: "thu-overhead-extension",
-
-                        name: "Overhead Cable Extension",
-
-                        sets: 2,
-                        minReps: 8,
-                        maxReps: 12,
-
-                        weight: 40,
-                        unit: "setting"
-                    }
-
-                ]
-            }
-
-        ]
-    },
-
-
-    // --------------------------------------------------------
-    // FRIDAY
-    // --------------------------------------------------------
-
-    friday: {
-
-        name: "Upper Body (Heavy)",
-
-        sections: [
-
-            {
-                name: "Neck Work",
-
-                exercises: [
-
-                    {
-                        name: "Neck Curls",
-                        sets: 2,
-                        minReps: 20,
-                        maxReps: 20
-                    },
-
-                    {
-                        name: "Chin Tucks",
-                        sets: 2,
-                        minReps: 20,
-                        maxReps: 20
-                    }
-
-                ]
-            },
-
-
-            {
-                name: "Strength Circuit",
-
-                exercises: [
-
-                    {
-                        id: "fri-incline-smith",
-
-                        name: "Incline Smith",
-
-                        sets: 2,
-                        minReps: 5,
-                        maxReps: 8,
-
-                        weight: 175,
-                        unit: "lb"
-                    },
-
-                    {
-                        id: "fri-lat-pulldown",
-
-                        name: "Lat Pulldown",
-
-                        sets: 2,
-                        minReps: 5,
-                        maxReps: 8,
-
-                        weight: 20,
-                        unit: "setting"
-                    },
-
-                    {
-                        id: "fri-chest-supported-row",
-
-                        name: "Chest Supported Row",
-
-                        sets: 2,
-                        minReps: 6,
-                        maxReps: 10,
-
-                        weight: 100,
-                        unit: "lb"
-                    },
-
-                    {
-                        id: "fri-machine-chest-press",
-
-                        name: "Machine Chest Press",
-
-                        sets: 2,
-                        minReps: 6,
-                        maxReps: 10,
-
-                        weight: 30,
-                        unit: "setting"
-                    },
-
-                    {
-                        id: "fri-cable-lat-raise",
-
-                        name: "Cable Lat Raise",
-
-                        sets: 2,
-                        minReps: 8,
-                        maxReps: 10,
-
-                        weight: 9,
-                        unit: "setting"
-                    }
-
-                ]
-            }
-
-        ]
-    }
-
-};
-
-
-// ============================================================
-// LOCAL STORAGE
-// ============================================================
-
-/*
-    localStorage can only store strings.
-
-    Therefore we store one JavaScript object by converting it
-    to JSON.
-
-    Our saved object looks roughly like:
-
-    {
-        targets: {
-            "mon-incline-smith": 170,
-            "mon-chest-press": 130
-        },
-
-        ratings: {
-            "mon-incline-smith": "Good"
-        }
-    }
-*/
-
-
-function loadAppData() {
-
-    const savedData =
+    const saved =
         localStorage.getItem(STORAGE_KEY);
 
 
-    // Nothing has ever been saved.
-    if (savedData === null) {
-
-        return {
-            targets: {},
-            ratings: {}
-        };
-
+    if (!saved) {
+        return createDefaultData();
     }
 
 
     try {
 
-        return JSON.parse(savedData);
-
-    }
-
-    catch (error) {
-
-        console.error(
-            "Could not read saved Lift Tracker data:",
-            error
-        );
+        const loaded =
+            JSON.parse(saved);
 
 
         return {
-            targets: {},
-            ratings: {}
+            ...createDefaultData(),
+            ...loaded,
+            ratings: loaded.ratings || {},
+            workouts: loaded.workouts || {}
         };
 
-    }
+    } catch (error) {
 
+        console.error(
+            "Could not load Lift Tracker data:",
+            error
+        );
+
+        return createDefaultData();
+    }
 }
 
 
-function saveAppData() {
+function saveData() {
 
     localStorage.setItem(
         STORAGE_KEY,
         JSON.stringify(appData)
     );
-
 }
 
 
-// Load saved information when the app starts.
-const appData = loadAppData();
+let appData =
+    loadData();
 
 
-// Make sure these objects exist even if we later change
-// the storage format.
+/* =========================================================
+   HELPERS
+========================================================= */
 
-if (!appData.targets) {
-    appData.targets = {};
-}
-
-if (!appData.ratings) {
-    appData.ratings = {};
+function clearScreen() {
+    appContainer.innerHTML = "";
 }
 
 
-// ============================================================
-// PLATE CALCULATOR
-// ============================================================
-
-function calculatePlates(
-    totalWeight,
-    barWeight = BAR_WEIGHT
+function setHeader(
+    title,
+    subtitle = ""
 ) {
 
-    let weightPerSide =
-        (totalWeight - barWeight) / 2;
+    pageTitle.textContent =
+        title;
 
-
-    if (weightPerSide < 0) {
-        return null;
-    }
-
-
-    const result = [];
-
-
-    for (const plate of AVAILABLE_PLATES) {
-
-        let count = 0;
-
-
-        while (
-            weightPerSide >=
-            plate - 0.001
-        ) {
-
-            weightPerSide -= plate;
-
-            count++;
-
-        }
-
-
-        if (count > 0) {
-
-            result.push({
-
-                weight: plate,
-
-                count: count
-
-            });
-
-        }
-
-    }
-
-
-    if (weightPerSide > 0.001) {
-        return null;
-    }
-
-
-    return result;
+    pageSubtitle.textContent =
+        subtitle;
 }
 
-// ============================================================
-// PROGRESSION
-// ============================================================
 
-function calculateNextTarget(currentTarget, unit, rating) {
+function showMenuButton() {
 
-    let newTarget = Number(currentTarget);
+    if (appData.setupComplete) {
 
+        menuButton.classList.remove(
+            "hidden"
+        );
 
-    // Make sure the target is actually a number.
-    if (Number.isNaN(newTarget)) {
-        return currentTarget;
+    } else {
+
+        menuButton.classList.add(
+            "hidden"
+        );
     }
-
-
-    // --------------------------------------------------------
-    // EASY
-    // --------------------------------------------------------
-
-    if (rating === "Easy") {
-
-        if (unit === "lb") {
-            newTarget += 10;
-        }
-
-        else if (unit === "setting") {
-            newTarget += 2;
-        }
-
-    }
-
-
-    // --------------------------------------------------------
-    // GOOD
-    // --------------------------------------------------------
-
-    else if (rating === "Good") {
-
-        if (unit === "lb") {
-            newTarget += 5;
-        }
-
-        else if (unit === "setting") {
-            newTarget += 1;
-        }
-
-    }
-
-
-    // --------------------------------------------------------
-    // BARELY
-    // --------------------------------------------------------
-
-    else if (rating === "Barely") {
-
-        // Keep the same target.
-        newTarget = currentTarget;
-
-    }
-
-
-    // --------------------------------------------------------
-    // FAILED
-    // --------------------------------------------------------
-
-    else if (rating === "Failed") {
-
-        if (unit === "lb") {
-            newTarget -= 5;
-        }
-
-        else if (unit === "setting") {
-            newTarget -= 1;
-        }
-
-    }
-
-
-    // --------------------------------------------------------
-    // SAFETY LIMITS
-    // --------------------------------------------------------
-
-    // Machine settings cannot go below 1.
-    if (unit === "setting" && newTarget < 1) {
-        newTarget = 1;
-    }
-
-
-    // Pound targets cannot go below 0.
-    if (unit === "lb" && newTarget < 0) {
-        newTarget = 0;
-    }
-
-
-    return newTarget;
 }
 
-// ============================================================
-// DATE
-// ============================================================
 
-const today = new Date();
+function createID() {
 
-
-const dayNames = [
-
-    "sunday",
-
-    "monday",
-
-    "tuesday",
-
-    "wednesday",
-
-    "thursday",
-
-    "friday",
-
-    "saturday"
-
-];
+    return (
+        Date.now().toString(36) +
+        Math.random()
+            .toString(36)
+            .substring(2, 7)
+    );
+}
 
 
-// ============================================================
-// TESTING DAY
-// ============================================================
+function escapeHTML(value) {
 
-/*
-    Keep Monday forced while we're developing.
+    return String(value)
 
-    When we're ready for normal operation, replace this:
-
-        const currentDay = "monday";
-
-    with:
-
-        const currentDay = dayNames[today.getDay()];
-*/
-
-const currentDay = dayNames[today.getDay()];
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+}
 
 
-// ============================================================
-// HTML REFERENCES
-// ============================================================
+function positiveNumber(
+    value,
+    fallback
+) {
 
-const workoutTitle =
-    document.getElementById("workout-title");
-
-
-const currentDate =
-    document.getElementById("current-date");
+    const number =
+        Number(value);
 
 
-const workoutContainer =
-    document.getElementById("workout-container");
+    if (
+        !Number.isFinite(number) ||
+        number < 1
+    ) {
+
+        return fallback;
+    }
 
 
-// ============================================================
-// DISPLAY DATE
-// ============================================================
+    return number;
+}
 
-currentDate.textContent =
-    today.toLocaleDateString(
 
-        undefined,
+/* =========================================================
+   CURRENT DAY
+========================================================= */
 
-        {
-            weekday: "long",
-            month: "long",
-            day: "numeric"
-        }
+function getCurrentDay() {
 
+    const dayNames = [
+        "Sunday",
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday"
+    ];
+
+
+    return dayNames[
+        new Date().getDay()
+    ];
+}
+
+
+function getFormattedDate() {
+
+    return new Date()
+        .toLocaleDateString(
+            undefined,
+            {
+                weekday: "long",
+                month: "long",
+                day: "numeric"
+            }
+        );
+}
+
+
+/* =========================================================
+   MENU
+========================================================= */
+
+menuButton.addEventListener(
+    "click",
+    showMenu
+);
+
+
+function showMenu() {
+
+    clearScreen();
+
+    setHeader(
+        "Menu",
+        `Lift Tracker for ${appData.name}`
     );
 
 
-// ============================================================
-// GET TODAY'S WORKOUT
-// ============================================================
+    appContainer.innerHTML = `
 
-const workout =
-    workoutSchedule[currentDay];
+        <div class="menu-card">
 
-
-// ============================================================
-// REST DAY
-// ============================================================
-
-if (!workout) {
-
-    workoutTitle.textContent =
-        "Rest Day";
+            <button
+                id="menu-workout"
+                class="menu-option"
+                type="button"
+            >
+                Back to Workout
+            </button>
 
 
-    workoutContainer.innerHTML = `
+            <button
+                id="menu-edit-lifts"
+                class="menu-option"
+                type="button"
+            >
+                Edit Lifts
+            </button>
 
-        <div class="rest-day">
-            No workout scheduled today.
+
+            <button
+                id="menu-days"
+                class="menu-option"
+                type="button"
+            >
+                Change Workout Days
+            </button>
+
         </div>
-
     `;
 
-}
 
-
-// ============================================================
-// WORKOUT DAY
-// ============================================================
-
-else {
-
-    workoutTitle.textContent =
-        workout.name;
-
-
-    workout.sections.forEach(section => {
-
-
-        const sectionElement =
-            document.createElement("div");
-
-
-        sectionElement.className =
-            "workout-section";
-
-
-        const sectionTitle =
-            document.createElement("h2");
-
-
-        sectionTitle.className =
-            "section-title";
-
-
-        sectionTitle.textContent =
-            section.name;
-
-
-        sectionElement.appendChild(
-            sectionTitle
+    document
+        .getElementById(
+            "menu-workout"
+        )
+        .addEventListener(
+            "click",
+            showTodayWorkout
         );
 
 
-        // ====================================================
-        // EXERCISES
-        // ====================================================
-
-        section.exercises.forEach(exercise => {
-
-
-            const card =
-                document.createElement("div");
-
-
-            card.className =
-                "exercise-card";
-
-
-            // ------------------------------------------------
-            // NAME
-            // ------------------------------------------------
-
-            const name =
-                document.createElement("h3");
-
-
-            name.className =
-                "exercise-name";
-
-
-            name.textContent =
-                exercise.name;
-
-
-            card.appendChild(name);
-
-
-            // ------------------------------------------------
-            // SETS / REPS
-            // ------------------------------------------------
-
-            const target =
-                document.createElement("p");
-
-
-            target.className =
-                "exercise-target";
-
-
-            if (
-                exercise.minReps ===
-                exercise.maxReps
-            ) {
-
-                target.textContent =
-                    `${exercise.sets} sets × ${exercise.minReps} reps`;
-
-            }
-
-            else {
-
-                target.textContent =
-                    `${exercise.sets} sets × ${exercise.minReps}-${exercise.maxReps} reps`;
-
-            }
-
-
-            card.appendChild(target);
-
-
-            // ------------------------------------------------
-            // NOTES
-            // ------------------------------------------------
-
-            if (exercise.note) {
-
-                const note =
-                    document.createElement("p");
-
-
-                note.className =
-                    "exercise-note";
-
-
-                note.textContent =
-                    exercise.note;
-
-
-                card.appendChild(note);
-
-            }
-
-
-            // =================================================
-            // EDITABLE WEIGHT
-            // =================================================
-
-            if (exercise.weight !== undefined) {
-
-
-                const weightArea =
-                    document.createElement("div");
-
-
-                weightArea.className =
-                    "weight-area";
-
-
-                const weightLabel =
-                    document.createElement("p");
-
-
-                weightLabel.className =
-                    "weight-label";
-
-
-                weightLabel.textContent =
-                    "Target";
-
-
-                weightArea.appendChild(
-                    weightLabel
-                );
-
-
-                // ------------------------------------------------
-                // INPUT ROW
-                // ------------------------------------------------
-
-                const inputRow =
-                    document.createElement("div");
-
-
-                inputRow.className =
-                    "weight-input-row";
-
-
-                const weightInput =
-                    document.createElement("input");
-
-
-                weightInput.className =
-                    "weight-input";
-
-
-                // =================================================
-                // LOAD SAVED TARGET
-                // =================================================
-
-                /*
-                    ?? means:
-
-                    Use the saved value IF one exists.
-
-                    Otherwise use exercise.weight.
-
-                    Similar idea to:
-
-                    savedValue != null
-                        ? savedValue
-                        : exercise.weight
-                */
-
-                const currentTarget =
-                    appData.targets[exercise.id]
-                    ?? exercise.weight;
-
-
-                weightInput.value =
-                    currentTarget;
-
-
-                if (exercise.unit === "lb") {
-
-                    weightInput.type =
-                        "number";
-
-
-                    weightInput.step =
-                        "2.5";
-
-                }
-
-                else {
-
-                    weightInput.type =
-                        "text";
-
-                }
-
-
-                inputRow.appendChild(
-                    weightInput
-                );
-
-
-                // ------------------------------------------------
-                // UNIT
-                // ------------------------------------------------
-
-                const unitLabel =
-                    document.createElement("span");
-
-
-                unitLabel.className =
-                    "unit-label";
-
-
-                if (exercise.unit === "lb") {
-
-                    unitLabel.textContent =
-                        "lb";
-
-                }
-
-                else {
-
-                    unitLabel.textContent =
-                        "setting";
-
-                }
-
-
-                inputRow.appendChild(
-                    unitLabel
-                );
-
-
-                weightArea.appendChild(
-                    inputRow
-                );
-
-
-                // =================================================
-                // SAVE WEIGHT WHEN CHANGED
-                // =================================================
-
-                weightInput.addEventListener(
-                    "change",
-                    () => {
-
-
-                        let newValue;
-
-
-                        if (exercise.unit === "lb") {
-
-                            newValue =
-                                Number(weightInput.value);
-
-
-                            if (
-                                Number.isNaN(newValue)
-                            ) {
-
-                                return;
-
-                            }
-
-                        }
-
-                        else {
-
-                            newValue =
-                                weightInput.value;
-
-                        }
-
-
-                        appData.targets[exercise.id] =
-                            newValue;
-
-
-                        saveAppData();
-
-
-                        console.log(
-                            `${exercise.name} saved as ${newValue}`
-                        );
-
-                    }
-                );
-
-
-                // =================================================
-                // PLATE CALCULATOR
-                // =================================================
-
-                if (
-                    exercise.unit === "lb" &&
-                    exercise.plateLoaded === true
-                ) {
-
-
-                    const plateDisplay =
-                        document.createElement("div");
-
-
-                    plateDisplay.className =
-                        "plate-display";
-
-
-                    function updatePlateDisplay() {
-
-
-                        const enteredWeight =
-                            Number(weightInput.value);
-
-
-                        if (
-                            Number.isNaN(enteredWeight)
-                        ) {
-
-                            plateDisplay.textContent =
-                                "Enter a valid weight.";
-
-                            return;
-
-                        }
-
-
-                        const barWeight =
-                            exercise.barWeight
-                            ?? BAR_WEIGHT;
-
-
-                        const plates =
-                            calculatePlates(
-                                enteredWeight,
-                                barWeight
-                            );
-
-
-                        if (plates === null) {
-
-                            plateDisplay.textContent =
-                                "Cannot make this weight with available plates.";
-
-                            return;
-
-                        }
-
-
-                        if (plates.length === 0) {
-
-                            if (barWeight > 0) {
-
-                                plateDisplay.textContent =
-                                    `${barWeight} lb bar only`;
-
-                            }
-
-                            else {
-
-                                plateDisplay.textContent =
-                                    "No plates required";
-
-                            }
-
-
-                            return;
-
-                        }
-
-
-                        const plateText =
-                            plates
-
-                                .map(
-                                    plate =>
-                                        `${plate.count} × ${plate.weight} lb`
-                                )
-
-                                .join(" + ");
-
-
-                        plateDisplay.textContent =
-                            `Per side: ${plateText}`;
-
-                    }
-
-
-                    updatePlateDisplay();
-
-
-                    weightInput.addEventListener(
-                        "input",
-                        updatePlateDisplay
-                    );
-
-
-                    weightArea.appendChild(
-                        plateDisplay
-                    );
-
-                }
-
-
-                card.appendChild(
-                    weightArea
-                );
-
-            }
-
-
-            // =================================================
-            // DIFFICULTY
-            //
-            // Only exercises with IDs are tracked.
-            // Neck work currently does not need progression.
-            // =================================================
-
-            if (exercise.id) {
-
-
-                const difficultyArea =
-                    document.createElement("div");
-
-
-                difficultyArea.className =
-                    "difficulty-area";
-
-
-                const difficultyLabel =
-                    document.createElement("p");
-
-
-                difficultyLabel.className =
-                    "difficulty-label";
-
-
-                difficultyLabel.textContent =
-                    "How did it feel?";
-
-
-                difficultyArea.appendChild(
-                    difficultyLabel
-                );
-
-
-                const difficultyButtons =
-                    document.createElement("div");
-
-
-                difficultyButtons.className =
-                    "difficulty-buttons";
-
-
-                const ratings = [
-
-                    "Easy",
-
-                    "Good",
-
-                    "Barely",
-
-                    "Failed"
-
-                ];
-
-
-                ratings.forEach(rating => {
-
-
-                    const button =
-                        document.createElement("button");
-
-
-                    button.className =
-                        "difficulty-button";
-
-
-                    button.textContent =
-                        rating;
-
-
-                    // -----------------------------------------
-                    // RESTORE SAVED SELECTION
-                    // -----------------------------------------
-
-                    if (
-                        appData.ratings[exercise.id]
-                        === rating
-                    ) {
-
-                        button.classList.add(
-                            "selected"
-                        );
-
-                    }
-
-
-                    // -----------------------------------------
-                    // BUTTON CLICK
-                    // -----------------------------------------
-
-                    button.addEventListener(
-                        "click",
-                        () => {
-
-
-                            const buttons =
-                                difficultyButtons
-                                    .querySelectorAll(
-                                        ".difficulty-button"
-                                    );
-
-
-                            buttons.forEach(
-                                otherButton => {
-
-                                    otherButton
-                                        .classList
-                                        .remove(
-                                            "selected"
-                                        );
-
-                                }
-                            );
-
-
-                            button.classList.add(
-                                "selected"
-                            );
-
-
-                            // Save rating.
-                            appData.ratings[exercise.id] =
-                                rating;
-
-
-                            saveAppData();
-
-
-                            console.log(
-                                `${exercise.name}: ${rating}`
-                            );
-
-                        }
-                    );
-
-
-                    difficultyButtons.appendChild(
-                        button
-                    );
-
-                });
-
-
-                difficultyArea.appendChild(
-                    difficultyButtons
-                );
-
-
-                card.appendChild(
-                    difficultyArea
-                );
-
-            }
-
-
-            sectionElement.appendChild(
-                card
-            );
-
-        });
-
-
-        workoutContainer.appendChild(
-            sectionElement
+    document
+        .getElementById(
+            "menu-edit-lifts"
+        )
+        .addEventListener(
+            "click",
+            showEditRoutine
         );
 
-    });
+
+    document
+        .getElementById(
+            "menu-days"
+        )
+        .addEventListener(
+            "click",
+            showEditDays
+        );
 }
-// ============================================================
-// FINISH WORKOUT
-// ============================================================
-
-if (workout) {
-
-    const finishButton =
-        document.createElement("button");
 
 
-    finishButton.className =
-        "finish-workout-button";
+/* =========================================================
+   NAME SETUP
+========================================================= */
+
+function showNameSetup() {
+
+    clearScreen();
 
 
-    finishButton.textContent =
-        "Finish Workout";
-
-
-    workoutContainer.appendChild(
-        finishButton
+    menuButton.classList.add(
+        "hidden"
     );
 
 
-    // ========================================================
-    // FINISH BUTTON CLICK
-    // ========================================================
+    setHeader(
+        "Welcome",
+        "Let's build your Lift Tracker."
+    );
 
-    finishButton.addEventListener(
+
+    appContainer.innerHTML = `
+
+        <div class="card">
+
+            <h2>
+                What's your name?
+            </h2>
+
+
+            <p style="color:#999;">
+                Your workout data stays
+                on this device.
+            </p>
+
+
+            <div class="input-group">
+
+                <label for="name-input">
+                    Name
+                </label>
+
+                <input
+                    id="name-input"
+                    type="text"
+                    maxlength="30"
+                    placeholder="Enter your name"
+                >
+
+            </div>
+
+
+            <button
+                id="continue-name"
+                class="primary-button"
+                type="button"
+            >
+                Continue
+            </button>
+
+
+            <div
+                style="
+                    margin:24px 0 18px;
+                    border-top:1px solid #292929;
+                "
+            ></div>
+
+
+            <p
+                style="
+                    color:#999;
+                    text-align:center;
+                    margin-bottom:12px;
+                "
+            >
+                Already used Lift Tracker?
+            </p>
+
+
+            <button
+                id="restore-button"
+                class="secondary-button"
+                type="button"
+            >
+                Restore from Backup
+            </button>
+
+
+            <input
+                id="backup-file-input"
+                type="file"
+                accept=".json,application/json"
+                style="display:none;"
+            >
+
+        </div>
+    `;
+
+
+    const input =
+        document.getElementById(
+            "name-input"
+        );
+
+
+    document
+        .getElementById(
+            "continue-name"
+        )
+        .addEventListener(
+            "click",
+            () => {
+
+                const name =
+                    input.value.trim();
+
+
+                if (!name) {
+
+                    alert(
+                        "Enter your name."
+                    );
+
+                    return;
+                }
+
+
+                appData.name =
+                    name;
+
+
+                saveData();
+
+
+                showDaySelection();
+            }
+        );
+
+
+    /*
+        Hidden file input.
+
+        Pressing Restore opens the
+        phone/computer file picker.
+    */
+
+    const fileInput =
+        document.getElementById(
+            "backup-file-input"
+        );
+
+
+    document
+        .getElementById(
+            "restore-button"
+        )
+        .addEventListener(
+            "click",
+            () => {
+
+                fileInput.click();
+            }
+        );
+
+
+    /*
+        Once the user selects a JSON
+        backup, restore it.
+    */
+
+    fileInput.addEventListener(
+        "change",
+        () => {
+
+            const file =
+                fileInput.files[0];
+
+
+            if (!file) {
+                return;
+            }
+
+
+            restoreBackup(
+                file
+            );
+        }
+    );
+}
+
+
+/* =========================================================
+   FIRST-TIME DAY SELECTION
+========================================================= */
+
+function showDaySelection() {
+
+    clearScreen();
+
+    setHeader(
+        `Hey, ${appData.name}.`,
+        "Which days do you lift?"
+    );
+
+
+    const list =
+        createDayCheckboxList();
+
+
+    appContainer.appendChild(
+        list
+    );
+
+
+    const button =
+        document.createElement(
+            "button"
+        );
+
+    button.type =
+        "button";
+
+    button.className =
+        "primary-button";
+
+    button.textContent =
+        "Build My Routine";
+
+
+    button.addEventListener(
         "click",
         () => {
 
-
-            // ------------------------------------------------
-            // CHECK THAT EVERY STRENGTH EXERCISE HAS A RATING
-            // ------------------------------------------------
-
-            const unratedExercises = [];
+            const selected =
+                getSelectedDays(
+                    list
+                );
 
 
-            workout.sections.forEach(section => {
-
-                section.exercises.forEach(exercise => {
-
-
-                    // Exercises without IDs, such as neck work,
-                    // do not need ratings.
-                    if (!exercise.id) {
-                        return;
-                    }
-
-
-                    if (!appData.ratings[exercise.id]) {
-
-                        unratedExercises.push(
-                            exercise.name
-                        );
-
-                    }
-
-                });
-
-            });
-
-
-            // ------------------------------------------------
-            // STOP IF SOMETHING HAS NOT BEEN RATED
-            // ------------------------------------------------
-
-            if (unratedExercises.length > 0) {
+            if (
+                selected.length === 0
+            ) {
 
                 alert(
-                    "Rate every strength exercise before finishing your workout."
+                    "Choose at least one day."
                 );
 
                 return;
             }
 
 
-            // ------------------------------------------------
-            // APPLY PROGRESSION
-            // ------------------------------------------------
-
-            workout.sections.forEach(section => {
-
-                section.exercises.forEach(exercise => {
-
-
-                    if (!exercise.id) {
-                        return;
-                    }
-
-
-                    // Get current target.
-                    const currentTarget =
-                        appData.targets[exercise.id]
-                        ?? exercise.weight;
-
-
-                    // Get today's rating.
-                    const rating =
-                        appData.ratings[exercise.id];
-
-
-                    // Calculate next workout's target.
-                    const newTarget =
-                        calculateNextTarget(
-                            currentTarget,
-                            exercise.unit,
-                            rating
-                        );
-
-
-                    // Save the new target.
-                    appData.targets[exercise.id] =
-                        newTarget;
-
-
-                    console.log(
-                        `${exercise.name}: ${currentTarget} -> ${newTarget}`
-                    );
-
-                });
-
-            });
-
-
-            // ------------------------------------------------
-            // CLEAR TODAY'S RATINGS
-            // ------------------------------------------------
-
-            workout.sections.forEach(section => {
-
-                section.exercises.forEach(exercise => {
-
-
-                    if (!exercise.id) {
-                        return;
-                    }
-
-
-                    delete appData.ratings[
-                        exercise.id
-                    ];
-
-                });
-
-            });
-
-
-            // ------------------------------------------------
-            // SAVE EVERYTHING
-            // ------------------------------------------------
-
-            saveAppData();
-
-
-            // ------------------------------------------------
-            // CONFIRM
-            // ------------------------------------------------
-
-            alert(
-                "Workout finished! Your next targets have been updated."
+            updateTrainingDays(
+                selected
             );
 
 
-            // Reload page so the new targets appear.
-            location.reload();
+            saveData();
 
+            showRoutineBuilder(
+                false
+            );
         }
     );
 
+
+    appContainer.appendChild(
+        button
+    );
+}
+
+
+/* =========================================================
+   EDIT WORKOUT DAYS
+========================================================= */
+
+function showEditDays() {
+
+    clearScreen();
+
+    setHeader(
+        "Workout Days",
+        "Choose the days you train."
+    );
+
+
+    const list =
+        createDayCheckboxList();
+
+
+    appContainer.appendChild(
+        list
+    );
+
+
+    const saveButton =
+        document.createElement(
+            "button"
+        );
+
+    saveButton.type =
+        "button";
+
+    saveButton.className =
+        "primary-button";
+
+    saveButton.textContent =
+        "Save Workout Days";
+
+
+    saveButton.addEventListener(
+        "click",
+        () => {
+
+            const selected =
+                getSelectedDays(
+                    list
+                );
+
+
+            if (
+                selected.length === 0
+            ) {
+
+                alert(
+                    "Choose at least one workout day."
+                );
+
+                return;
+            }
+
+
+            const oldDays = [
+                ...appData.trainingDays
+            ];
+
+
+            const newDays =
+                selected.filter(
+                    day =>
+                        !oldDays.includes(
+                            day
+                        )
+                );
+
+
+            updateTrainingDays(
+                selected
+            );
+
+
+            saveData();
+
+
+            /*
+                If the user added a new
+                training day, take them
+                straight to Edit Lifts so
+                they can add exercises.
+            */
+
+            if (
+                newDays.length > 0
+            ) {
+
+                alert(
+                    "Workout days saved. Add lifts to your new training day."
+                );
+
+                showEditRoutine();
+
+                return;
+            }
+
+
+            showTodayWorkout();
+        }
+    );
+
+
+    appContainer.appendChild(
+        saveButton
+    );
+
+
+    const cancelButton =
+        document.createElement(
+            "button"
+        );
+
+    cancelButton.type =
+        "button";
+
+    cancelButton.className =
+        "secondary-button";
+
+    cancelButton.textContent =
+        "Cancel";
+
+
+    cancelButton.addEventListener(
+        "click",
+        showMenu
+    );
+
+
+    appContainer.appendChild(
+        cancelButton
+    );
+}
+
+
+/* =========================================================
+   DAY CHECKBOX HELPERS
+========================================================= */
+
+function createDayCheckboxList() {
+
+    const list =
+        document.createElement(
+            "div"
+        );
+
+    list.className =
+        "day-list";
+
+
+    DAYS.forEach(day => {
+
+        const label =
+            document.createElement(
+                "label"
+            );
+
+        label.className =
+            "day-option";
+
+
+        const checkbox =
+            document.createElement(
+                "input"
+            );
+
+        checkbox.type =
+            "checkbox";
+
+        checkbox.value =
+            day;
+
+        checkbox.checked =
+            appData.trainingDays
+                .includes(day);
+
+
+        const text =
+            document.createElement(
+                "span"
+            );
+
+        text.textContent =
+            day;
+
+
+        label.append(
+            checkbox,
+            text
+        );
+
+
+        list.appendChild(
+            label
+        );
+    });
+
+
+    return list;
+}
+
+
+function getSelectedDays(list) {
+
+    return Array.from(
+        list.querySelectorAll(
+            "input:checked"
+        )
+    )
+        .map(
+            input =>
+                input.value
+        );
+}
+
+
+function updateTrainingDays(
+    selectedDays
+) {
+
+    appData.trainingDays =
+        selectedDays;
+
+
+    selectedDays.forEach(
+        day => {
+
+            if (
+                !appData.workouts[day]
+            ) {
+
+                appData.workouts[day] =
+                    [];
+            }
+        }
+    );
+}
+
+
+/* =========================================================
+   CREATE EXERCISE
+========================================================= */
+
+function createExercise() {
+
+    return {
+
+        id: createID(),
+
+        name: "",
+
+        type: "freeWeight",
+
+        sets: 2,
+
+        minReps: 5,
+
+        maxReps: 8,
+
+        target: 0,
+
+        plateLoaded: false
+    };
+}
+
+
+/* =========================================================
+   FIRST-TIME ROUTINE BUILDER
+========================================================= */
+
+function showRoutineBuilder() {
+
+    renderRoutineBuilder(
+        false
+    );
+}
+
+
+/* =========================================================
+   EDIT EXISTING ROUTINE
+========================================================= */
+
+function showEditRoutine() {
+
+    renderRoutineBuilder(
+        true
+    );
+}
+
+
+/* =========================================================
+   ROUTINE BUILDER
+========================================================= */
+
+function renderRoutineBuilder(
+    editing
+) {
+
+    clearScreen();
+
+
+    if (editing) {
+
+        setHeader(
+            "Edit Lifts",
+            "Add, remove, or change exercises."
+        );
+
+    } else {
+
+        setHeader(
+            "Build Your Routine",
+            "Add your exercises."
+        );
+    }
+
+
+    appData.trainingDays.forEach(
+        day => {
+
+            const section =
+                document.createElement(
+                    "section"
+                );
+
+            section.className =
+                "day-builder";
+
+
+            const heading =
+                document.createElement(
+                    "h2"
+                );
+
+            heading.textContent =
+                day;
+
+
+            section.appendChild(
+                heading
+            );
+
+
+            const exercises =
+                appData.workouts[day] ||
+                [];
+
+
+            exercises.forEach(
+                (
+                    exercise,
+                    index
+                ) => {
+
+                    section.appendChild(
+                        buildExerciseCard(
+                            day,
+                            exercise,
+                            index,
+                            editing
+                        )
+                    );
+                }
+            );
+
+
+            const addButton =
+                document.createElement(
+                    "button"
+                );
+
+            addButton.type =
+                "button";
+
+            addButton.className =
+                "add-button";
+
+            addButton.textContent =
+                "+ Add Exercise";
+
+
+            addButton.addEventListener(
+                "click",
+                () => {
+
+                    saveBuilder();
+
+                    appData.workouts[
+                        day
+                    ].push(
+                        createExercise()
+                    );
+
+                    saveData();
+
+                    renderRoutineBuilder(
+                        editing
+                    );
+                }
+            );
+
+
+            section.appendChild(
+                addButton
+            );
+
+
+            appContainer.appendChild(
+                section
+            );
+        }
+    );
+
+
+    const saveButton =
+        document.createElement(
+            "button"
+        );
+
+    saveButton.type =
+        "button";
+
+    saveButton.className =
+        "primary-button finish-setup";
+
+
+    saveButton.textContent =
+        editing
+            ? "Save Changes"
+            : "Finish Setup";
+
+
+    saveButton.addEventListener(
+        "click",
+        () => {
+
+            if (
+                validateAndSaveRoutine()
+            ) {
+
+                if (editing) {
+
+                    alert(
+                        "Routine updated."
+                    );
+
+                    showTodayWorkout();
+
+                } else {
+
+                    appData.setupComplete =
+                        true;
+
+                    appData.ratings = {};
+
+                    saveData();
+
+                    showMenuButton();
+
+                    showTodayWorkout();
+                }
+            }
+        }
+    );
+
+
+    appContainer.appendChild(
+        saveButton
+    );
+
+
+    if (editing) {
+
+        const cancelButton =
+            document.createElement(
+                "button"
+            );
+
+        cancelButton.type =
+            "button";
+
+        cancelButton.className =
+            "secondary-button";
+
+        cancelButton.textContent =
+            "Cancel";
+
+
+        cancelButton.addEventListener(
+            "click",
+            showMenu
+        );
+
+
+        appContainer.appendChild(
+            cancelButton
+        );
+    }
+}
+
+
+/* =========================================================
+   EXERCISE BUILDER CARD
+========================================================= */
+
+function buildExerciseCard(
+    day,
+    exercise,
+    index,
+    editing
+) {
+
+    const card =
+        document.createElement(
+            "div"
+        );
+
+    card.className =
+        "exercise-card";
+
+    card.dataset.day =
+        day;
+
+    card.dataset.id =
+        exercise.id;
+
+
+    card.innerHTML = `
+
+        <div class="exercise-header">
+
+            <h3>
+                Exercise ${index + 1}
+            </h3>
+
+            <button
+                class="remove-button"
+                type="button"
+            >
+                Remove
+            </button>
+
+        </div>
+
+
+        <div class="input-group">
+
+            <label>
+                Exercise Name
+            </label>
+
+            <input
+                class="exercise-name"
+                type="text"
+                value="${escapeHTML(
+                    exercise.name
+                )}"
+                placeholder="Incline Bench"
+            >
+
+        </div>
+
+
+        <div class="input-group">
+
+            <label>
+                Exercise Type
+            </label>
+
+
+            <div class="type-buttons">
+
+                <button
+                    class="type-button ${
+                        exercise.type ===
+                        "machine"
+                            ? "selected"
+                            : ""
+                    }"
+                    data-type="machine"
+                    type="button"
+                >
+                    Machine
+                </button>
+
+
+                <button
+                    class="type-button ${
+                        exercise.type ===
+                        "freeWeight"
+                            ? "selected"
+                            : ""
+                    }"
+                    data-type="freeWeight"
+                    type="button"
+                >
+                    Free Weight
+                </button>
+
+
+                <button
+                    class="type-button ${
+                        exercise.type ===
+                        "bodyweight"
+                            ? "selected"
+                            : ""
+                    }"
+                    data-type="bodyweight"
+                    type="button"
+                >
+                    Bodyweight
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <div class="number-row">
+
+            <div class="input-group">
+
+                <label>
+                    Sets
+                </label>
+
+                <input
+                    class="exercise-sets"
+                    type="number"
+                    min="1"
+                    value="${exercise.sets}"
+                >
+
+            </div>
+
+
+            <div class="input-group">
+
+                <label>
+                    Min Reps
+                </label>
+
+                <input
+                    class="exercise-min"
+                    type="number"
+                    min="1"
+                    value="${exercise.minReps}"
+                >
+
+            </div>
+
+
+            <div class="input-group">
+
+                <label>
+                    Max Reps
+                </label>
+
+                <input
+                    class="exercise-max"
+                    type="number"
+                    min="1"
+                    value="${exercise.maxReps}"
+                >
+
+            </div>
+
+        </div>
+
+
+        <div class="target-area">
+        </div>
+    `;
+
+
+    card
+        .querySelector(
+            ".remove-button"
+        )
+        .addEventListener(
+            "click",
+            () => {
+
+                saveBuilder();
+
+
+                appData.workouts[day] =
+                    appData.workouts[day]
+                        .filter(
+                            item =>
+                                item.id !==
+                                exercise.id
+                        );
+
+
+                delete appData.ratings[
+                    exercise.id
+                ];
+
+
+                saveData();
+
+
+                renderRoutineBuilder(
+                    editing
+                );
+            }
+        );
+
+
+    card
+        .querySelectorAll(
+            ".type-button"
+        )
+        .forEach(
+            button => {
+
+                button.addEventListener(
+                    "click",
+                    () => {
+
+                        saveBuilder();
+
+
+                        exercise.type =
+                            button.dataset.type;
+
+
+                        if (
+                            exercise.type ===
+                            "bodyweight"
+                        ) {
+
+                            exercise.target =
+                                0;
+
+                            exercise.plateLoaded =
+                                false;
+                        }
+
+
+                        saveData();
+
+
+                        renderRoutineBuilder(
+                            editing
+                        );
+                    }
+                );
+            }
+        );
+
+
+    renderTarget(
+        card,
+        exercise
+    );
+
+
+    return card;
+}
+
+
+/* =========================================================
+   TARGET INPUT
+========================================================= */
+
+function renderTarget(
+    card,
+    exercise
+) {
+
+    const area =
+        card.querySelector(
+            ".target-area"
+        );
+
+
+    if (
+        exercise.type ===
+        "machine"
+    ) {
+
+        area.innerHTML = `
+
+            <div class="input-group">
+
+                <label>
+                    Current Machine Setting
+                </label>
+
+                <input
+                    class="exercise-target"
+                    type="number"
+                    min="1"
+                    step="1"
+                    value="${
+                        exercise.target || 1
+                    }"
+                >
+
+            </div>
+        `;
+
+
+        return;
+    }
+
+
+    if (
+        exercise.type ===
+        "freeWeight"
+    ) {
+
+        area.innerHTML = `
+
+            <div class="input-group">
+
+                <label>
+                    Current Weight (lb)
+                </label>
+
+                <input
+                    class="exercise-target"
+                    type="number"
+                    min="0"
+                    step="2.5"
+                    value="${
+                        exercise.target
+                    }"
+                >
+
+            </div>
+
+
+            <div class="checkbox-row">
+
+                <input
+                    class="plate-loaded"
+                    type="checkbox"
+                    ${
+                        exercise.plateLoaded
+                            ? "checked"
+                            : ""
+                    }
+                >
+
+                <span>
+                    Plate Loaded
+                </span>
+
+            </div>
+        `;
+
+
+        return;
+    }
+
+
+    area.innerHTML = `
+
+        <p style="color:#999;">
+            Bodyweight exercise —
+            progression changes the
+            rep range.
+        </p>
+    `;
+}
+
+
+/* =========================================================
+   SAVE BUILDER
+========================================================= */
+
+function saveBuilder() {
+
+    document
+        .querySelectorAll(
+            ".exercise-card"
+        )
+        .forEach(
+            card => {
+
+                const day =
+                    card.dataset.day;
+
+                const id =
+                    card.dataset.id;
+
+
+                const exercise =
+                    appData.workouts[
+                        day
+                    ]
+                        .find(
+                            item =>
+                                item.id ===
+                                id
+                        );
+
+
+                if (!exercise) {
+                    return;
+                }
+
+
+                exercise.name =
+                    card
+                        .querySelector(
+                            ".exercise-name"
+                        )
+                        .value
+                        .trim();
+
+
+                exercise.sets =
+                    positiveNumber(
+                        card.querySelector(
+                            ".exercise-sets"
+                        ).value,
+                        1
+                    );
+
+
+                exercise.minReps =
+                    positiveNumber(
+                        card.querySelector(
+                            ".exercise-min"
+                        ).value,
+                        1
+                    );
+
+
+                exercise.maxReps =
+                    positiveNumber(
+                        card.querySelector(
+                            ".exercise-max"
+                        ).value,
+                        exercise.minReps
+                    );
+
+
+                const target =
+                    card.querySelector(
+                        ".exercise-target"
+                    );
+
+
+                if (target) {
+
+                    exercise.target =
+                        Number(
+                            target.value
+                        ) || 0;
+                }
+
+
+                const plate =
+                    card.querySelector(
+                        ".plate-loaded"
+                    );
+
+
+                exercise.plateLoaded =
+                    plate
+                        ? plate.checked
+                        : false;
+            }
+        );
+
+
+    saveData();
+}
+
+
+/* =========================================================
+   VALIDATE ROUTINE
+========================================================= */
+
+function validateAndSaveRoutine() {
+
+    saveBuilder();
+
+
+    for (
+        const day
+        of appData.trainingDays
+    ) {
+
+        const exercises =
+            appData.workouts[
+                day
+            ] || [];
+
+
+        if (
+            exercises.length === 0
+        ) {
+
+            alert(
+                `Add at least one exercise to ${day}.`
+            );
+
+            return false;
+        }
+
+
+        for (
+            const exercise
+            of exercises
+        ) {
+
+            if (!exercise.name) {
+
+                alert(
+                    `${day} has an exercise without a name.`
+                );
+
+                return false;
+            }
+
+
+            if (
+                exercise.maxReps <
+                exercise.minReps
+            ) {
+
+                alert(
+                    `${exercise.name}: max reps must be at least min reps.`
+                );
+
+                return false;
+            }
+
+
+            if (
+                exercise.type ===
+                "machine" &&
+                exercise.target < 1
+            ) {
+
+                alert(
+                    `${exercise.name}: machine setting must be at least 1.`
+                );
+
+                return false;
+            }
+        }
+    }
+
+
+    saveData();
+
+    return true;
+}
+
+
+/* =========================================================
+   TODAY'S WORKOUT
+========================================================= */
+
+function showTodayWorkout() {
+
+    clearScreen();
+
+    showMenuButton();
+
+
+    const today =
+        getCurrentDay();
+
+
+    if (
+        !appData.trainingDays
+            .includes(today)
+    ) {
+
+        showRestDay(
+            today
+        );
+
+        return;
+    }
+
+
+    const exercises =
+        appData.workouts[
+            today
+        ] || [];
+
+
+    setHeader(
+        `${today} Workout`,
+        getFormattedDate()
+    );
+
+
+    exercises.forEach(
+        exercise => {
+
+            appContainer.appendChild(
+                createWorkoutCard(
+                    exercise
+                )
+            );
+        }
+    );
+
+
+    const finishButton =
+        document.createElement(
+            "button"
+        );
+
+    finishButton.type =
+        "button";
+
+    finishButton.className =
+        "primary-button";
+
+    finishButton.style.marginTop =
+        "15px";
+
+    finishButton.textContent =
+        "Finish Workout";
+
+
+    finishButton.addEventListener(
+        "click",
+        () => {
+
+            finishWorkout(
+                exercises
+            );
+        }
+    );
+
+
+    appContainer.appendChild(
+        finishButton
+    );
+}
+
+
+/* =========================================================
+   WORKOUT CARD
+========================================================= */
+
+function createWorkoutCard(
+    exercise
+) {
+
+    const card =
+        document.createElement(
+            "div"
+        );
+
+    card.className =
+        "card";
+
+
+    card.innerHTML = `
+
+        <h2 class="workout-exercise-name">
+            ${escapeHTML(
+                exercise.name
+            )}
+        </h2>
+
+
+        <div class="workout-reps">
+
+            ${exercise.sets}
+            sets
+
+            ·
+
+            ${exercise.minReps}
+            – ${exercise.maxReps}
+            reps
+
+        </div>
+
+
+        <div class="workout-target">
+
+            ${getTargetText(
+                exercise
+            )}
+
+        </div>
+
+
+        <div class="plate-info">
+        </div>
+
+
+        <p class="rating-label">
+            HOW DID IT FEEL?
+        </p>
+
+
+        <div class="rating-buttons">
+        </div>
+    `;
+
+
+    if (
+        exercise.type ===
+        "freeWeight" &&
+        exercise.plateLoaded
+    ) {
+
+        card
+            .querySelector(
+                ".plate-info"
+            )
+            .textContent =
+                getPlateText(
+                    exercise.target
+                );
+    }
+
+
+    const ratingContainer =
+        card.querySelector(
+            ".rating-buttons"
+        );
+
+
+    RATINGS.forEach(
+        rating => {
+
+            const button =
+                document.createElement(
+                    "button"
+                );
+
+            button.type =
+                "button";
+
+            button.className =
+                "rating-button";
+
+            button.textContent =
+                rating;
+
+
+            if (
+                appData.ratings[
+                    exercise.id
+                ] === rating
+            ) {
+
+                button.classList.add(
+                    "selected"
+                );
+            }
+
+
+            button.addEventListener(
+                "click",
+                () => {
+
+                    appData.ratings[
+                        exercise.id
+                    ] = rating;
+
+
+                    saveData();
+
+
+                    ratingContainer
+                        .querySelectorAll(
+                            ".rating-button"
+                        )
+                        .forEach(
+                            other => {
+
+                                other.classList.remove(
+                                    "selected"
+                                );
+                            }
+                        );
+
+
+                    button.classList.add(
+                        "selected"
+                    );
+                }
+            );
+
+
+            ratingContainer.appendChild(
+                button
+            );
+        }
+    );
+
+
+    return card;
+}
+
+
+/* =========================================================
+   TARGET DISPLAY
+========================================================= */
+
+function getTargetText(
+    exercise
+) {
+
+    if (
+        exercise.type ===
+        "machine"
+    ) {
+
+        return (
+            `Setting ${exercise.target}`
+        );
+    }
+
+
+    if (
+        exercise.type ===
+        "freeWeight"
+    ) {
+
+        return (
+            `${exercise.target} lb`
+        );
+    }
+
+
+    return "Bodyweight";
+}
+
+
+/* =========================================================
+   PLATE CALCULATOR
+========================================================= */
+
+function getPlateText(
+    totalWeight
+) {
+
+    if (
+        totalWeight ===
+        BAR_WEIGHT
+    ) {
+
+        return "Empty 45 lb bar";
+    }
+
+
+    if (
+        totalWeight <
+        BAR_WEIGHT
+    ) {
+
+        return "Below 45 lb bar weight";
+    }
+
+
+    let weightPerSide =
+        (
+            totalWeight -
+            BAR_WEIGHT
+        ) / 2;
+
+
+    const plates = [];
+
+
+    for (
+        const plate
+        of AVAILABLE_PLATES
+    ) {
+
+        const count =
+            Math.floor(
+                weightPerSide /
+                plate
+            );
+
+
+        if (
+            count > 0
+        ) {
+
+            plates.push(
+                `${plate} × ${count}`
+            );
+
+
+            weightPerSide -=
+                plate * count;
+        }
+    }
+
+
+    if (
+        weightPerSide > 0.01
+    ) {
+
+        return (
+            "Exact plate combination unavailable"
+        );
+    }
+
+
+    return (
+        `Per side: ${plates.join(" + ")}`
+    );
+}
+
+
+/* =========================================================
+   PROGRESSION
+========================================================= */
+
+function applyProgression(
+    exercise,
+    rating
+) {
+
+    /*
+        MACHINE
+
+        Easy   +2
+        Good   +1
+        Barely same
+        Failed -1
+    */
+
+    if (
+        exercise.type ===
+        "machine"
+    ) {
+
+        let change = 0;
+
+
+        if (
+            rating === "Easy"
+        ) {
+
+            change = 2;
+        }
+
+        else if (
+            rating === "Good"
+        ) {
+
+            change = 1;
+        }
+
+        else if (
+            rating === "Failed"
+        ) {
+
+            change = -1;
+        }
+
+
+        exercise.target =
+            Math.max(
+                1,
+                Number(
+                    exercise.target
+                ) + change
+            );
+
+
+        return;
+    }
+
+
+    /*
+        FREE WEIGHT
+
+        Easy   +10 lb
+        Good   +5 lb
+        Barely same
+        Failed -5 lb
+    */
+
+    if (
+        exercise.type ===
+        "freeWeight"
+    ) {
+
+        let change = 0;
+
+
+        if (
+            rating === "Easy"
+        ) {
+
+            change = 10;
+        }
+
+        else if (
+            rating === "Good"
+        ) {
+
+            change = 5;
+        }
+
+        else if (
+            rating === "Failed"
+        ) {
+
+            change = -5;
+        }
+
+
+        exercise.target =
+            Math.max(
+                0,
+                Number(
+                    exercise.target
+                ) + change
+            );
+
+
+        return;
+    }
+
+
+    /*
+        BODYWEIGHT
+
+        Easy   +2 reps
+        Good   +1 rep
+        Barely same
+        Failed -1 rep
+    */
+
+    if (
+        exercise.type ===
+        "bodyweight"
+    ) {
+
+        let change = 0;
+
+
+        if (
+            rating === "Easy"
+        ) {
+
+            change = 2;
+        }
+
+        else if (
+            rating === "Good"
+        ) {
+
+            change = 1;
+        }
+
+        else if (
+            rating === "Failed"
+        ) {
+
+            change = -1;
+        }
+
+
+        exercise.minReps =
+            Math.max(
+                1,
+                exercise.minReps +
+                change
+            );
+
+
+        exercise.maxReps =
+            Math.max(
+                exercise.minReps,
+                exercise.maxReps +
+                change
+            );
+    }
+}
+/* =========================================================
+   AUTOMATIC BACKUP
+========================================================= */
+
+function downloadBackup() {
+
+    const backup = {
+        version: 2,
+        createdAt: new Date().toISOString(),
+
+        data: appData
+    };
+
+
+    const json =
+        JSON.stringify(
+            backup,
+            null,
+            2
+        );
+
+
+    const blob =
+        new Blob(
+            [json],
+            {
+                type: "application/json"
+            }
+        );
+
+
+    const url =
+        URL.createObjectURL(
+            blob
+        );
+
+
+    const link =
+        document.createElement(
+            "a"
+        );
+
+
+    const date =
+        new Date()
+            .toISOString()
+            .split("T")[0];
+
+
+    link.href = url;
+
+    link.download =
+        `lift-tracker-backup-${date}.json`;
+
+
+    document.body.appendChild(
+        link
+    );
+
+
+    link.click();
+
+
+    document.body.removeChild(
+        link
+    );
+
+
+    URL.revokeObjectURL(
+        url
+    );
+}
+
+/* =========================================================
+   FINISH WORKOUT
+========================================================= */
+
+function finishWorkout(
+    exercises
+) {
+
+    /*
+        First make sure every exercise
+        has been rated.
+    */
+
+    for (
+        const exercise
+        of exercises
+    ) {
+
+        if (
+            !appData.ratings[
+                exercise.id
+            ]
+        ) {
+
+            alert(
+                "Rate every exercise before finishing your workout."
+            );
+
+            return;
+        }
+    }
+
+
+    /*
+        Apply progression to every lift.
+    */
+
+    exercises.forEach(
+        exercise => {
+
+            const rating =
+                appData.ratings[
+                    exercise.id
+                ];
+
+
+            applyProgression(
+                exercise,
+                rating
+            );
+
+
+            /*
+                Clear today's rating so
+                the next workout starts
+                fresh.
+            */
+
+            delete appData.ratings[
+                exercise.id
+            ];
+        }
+    );
+
+
+    /*
+        Save the NEW targets locally
+        before creating the backup.
+    */
+
+    saveData();
+
+
+    /*
+        Automatically download a copy
+        of the entire Lift Tracker data.
+    */
+
+    downloadBackup();
+
+    /* =========================================================
+   RESTORE BACKUP
+========================================================= */
+
+function restoreBackup(file) {
+
+    if (!file) {
+        return;
+    }
+
+
+    const reader =
+        new FileReader();
+
+
+    reader.addEventListener(
+        "load",
+        () => {
+
+            try {
+
+                const backup =
+                    JSON.parse(
+                        reader.result
+                    );
+
+
+                /*
+                    Make sure this looks
+                    like one of our
+                    Lift Tracker backups.
+                */
+
+                if (
+                    !backup ||
+                    backup.version !== 2 ||
+                    !backup.data
+                ) {
+
+                    alert(
+                        "This doesn't look like a valid Lift Tracker backup."
+                    );
+
+                    return;
+                }
+
+
+                const restoredData =
+                    backup.data;
+
+
+                /*
+                    Check the important
+                    pieces before replacing
+                    current app data.
+                */
+
+                if (
+                    typeof restoredData.name !==
+                    "string" ||
+
+                    !Array.isArray(
+                        restoredData.trainingDays
+                    ) ||
+
+                    typeof restoredData.workouts !==
+                    "object"
+                ) {
+
+                    alert(
+                        "This backup is missing required Lift Tracker data."
+                    );
+
+                    return;
+                }
+
+
+                /*
+                    Rebuild the data using
+                    our current default
+                    structure.
+
+                    This makes older backups
+                    safer if we add more
+                    fields later.
+                */
+
+                appData = {
+
+                    ...createDefaultData(),
+
+                    ...restoredData,
+
+                    ratings:
+                        restoredData.ratings ||
+                        {},
+
+                    workouts:
+                        restoredData.workouts ||
+                        {}
+                };
+
+
+                /*
+                    A restored backup is
+                    already a configured
+                    Lift Tracker.
+                */
+
+                appData.setupComplete =
+                    true;
+
+
+                saveData();
+
+
+                alert(
+                    "Backup restored!"
+                );
+
+
+                showMenuButton();
+
+                showTodayWorkout();
+
+            } catch (error) {
+
+                console.error(
+                    "Restore failed:",
+                    error
+                );
+
+
+                alert(
+                    "That backup file couldn't be read."
+                );
+            }
+        }
+    );
+
+
+    reader.readAsText(
+        file
+    );
+}
+
+
+    alert(
+        "Workout finished! Your next targets have been updated and your backup was created."
+    );
+
+
+    showTodayWorkout();
+}
+
+
+/* =========================================================
+   REST DAY
+========================================================= */
+
+function showRestDay(
+    today
+) {
+
+    setHeader(
+        "Rest Day",
+        getFormattedDate()
+    );
+
+
+    const card =
+        document.createElement(
+            "div"
+        );
+
+    card.className =
+        "card";
+
+    card.style.textAlign =
+        "center";
+
+
+    card.innerHTML = `
+
+        <div
+            style="
+                font-size:38px;
+                margin-bottom:12px;
+            "
+        >
+            ✓
+        </div>
+
+
+        <h2>
+            No workout today.
+        </h2>
+
+
+        <p
+            style="
+                color:#999;
+                line-height:1.5;
+            "
+        >
+            ${today} isn't one of your
+            selected training days.
+        </p>
+
+
+        <button
+            id="change-days-rest"
+            class="secondary-button"
+            type="button"
+        >
+            Change Workout Days
+        </button>
+    `;
+
+
+    appContainer.appendChild(
+        card
+    );
+
+
+    document
+        .getElementById(
+            "change-days-rest"
+        )
+        .addEventListener(
+            "click",
+            showEditDays
+        );
+}
+
+
+/* =========================================================
+   START APP
+========================================================= */
+
+showMenuButton();
+
+
+if (
+    appData.setupComplete
+) {
+
+    showTodayWorkout();
+
+}
+
+else if (
+    appData.name
+) {
+
+    showDaySelection();
+
+}
+
+else {
+
+    showNameSetup();
 }

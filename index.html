@@ -7,13 +7,30 @@
 
     <meta
         name="viewport"
-        content="width=device-width, initial-scale=1.0"
+        content="
+            width=device-width,
+            initial-scale=1.0,
+            viewport-fit=cover
+        "
     >
+
+
+    <title>Lift Tracker</title>
+
+
+    <!-- =========================
+         APP COLORS
+    ========================== -->
 
     <meta
         name="theme-color"
         content="#0d0d0d"
     >
+
+
+    <!-- =========================
+         IPHONE / IOS
+    ========================== -->
 
     <meta
         name="apple-mobile-web-app-capable"
@@ -31,27 +48,29 @@
     >
 
 
-    <title>Lift Tracker</title>
+    <!-- =========================
+         PWA
+    ========================== -->
 
-
-    <!-- PWA Manifest -->
     <link
         rel="manifest"
-        href="manifest.json"
+        href="./manifest.json"
     >
 
 
-    <!-- iPhone Home Screen Icon -->
     <link
         rel="apple-touch-icon"
-        href="icons/icon-192.png"
+        href="./icons/icon-192.png"
     >
 
 
-    <!-- CSS -->
+    <!-- =========================
+         STYLES
+    ========================== -->
+
     <link
         rel="stylesheet"
-        href="style.css"
+        href="./style.css"
     >
 
 </head>
@@ -61,49 +80,90 @@
 
     <main class="app">
 
-        <header>
+        <header class="header">
 
-            <p class="app-label">
-                LIFT TRACKER
-            </p>
+            <div class="header-top">
 
-            <h1 id="workout-title">
+                <p class="logo">
+                    LIFT TRACKER
+                </p>
+
+
+                <button
+                    id="menu-button"
+                    class="menu-button hidden"
+                    type="button"
+                    aria-label="Open menu"
+                >
+                    ☰
+                </button>
+
+            </div>
+
+
+            <h1 id="page-title">
                 Loading...
             </h1>
 
-            <p id="current-date"></p>
+
+            <p id="page-subtitle"></p>
 
         </header>
 
 
-        <section id="workout-container">
-
-            <!-- JavaScript creates workout here -->
-
+        <section id="app-container">
         </section>
 
     </main>
 
 
-    <script src="app.js"></script>
+    <!-- =========================
+         APP
+    ========================== -->
+
+    <script src="./app.js"></script>
 
 
-    <!-- Register Service Worker -->
+    <!-- =========================
+         SERVICE WORKER
+    ========================== -->
+
     <script>
 
-        if ("serviceWorker" in navigator) {
+        if (
+            "serviceWorker" in
+            navigator
+        ) {
 
             window.addEventListener(
                 "load",
                 () => {
 
-                    navigator.serviceWorker.register(
-                        "./service-worker.js"
-                    );
+                    navigator
+                        .serviceWorker
+                        .register(
+                            "./service-worker.js"
+                        )
+                        .then(
+                            registration => {
 
+                                console.log(
+                                    "Lift Tracker service worker registered.",
+                                    registration
+                                );
+                            }
+                        )
+                        .catch(
+                            error => {
+
+                                console.error(
+                                    "Service worker registration failed:",
+                                    error
+                                );
+                            }
+                        );
                 }
             );
-
         }
 
     </script>
