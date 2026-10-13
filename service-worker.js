@@ -1,6 +1,6 @@
 
 const CACHE_NAME =
-    "lift-tracker-v2-1";
+    "lift-tracker-v2-2";
 
 const FILES_TO_CACHE = [
     "./",
