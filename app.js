@@ -849,7 +849,9 @@ function createExercise() {
 
         target: 0,
 
-        plateLoaded: false
+        plateLoaded: false,
+
+        machineIncrement: 1
     };
 }
 
@@ -914,21 +916,90 @@ function renderRoutineBuilder(
                 );
 
             section.className =
-                "day-builder";
+                editing
+                    ? "day-builder day-dropdown"
+                    : "day-builder";
 
 
-            const heading =
+            const content =
                 document.createElement(
-                    "h2"
+                    editing
+                        ? "div"
+                        : "section"
                 );
 
-            heading.textContent =
-                day;
+            if (editing) {
 
+                const summary =
+                    document.createElement(
+                        "button"
+                    );
 
-            section.appendChild(
-                heading
-            );
+                summary.type =
+                    "button";
+
+                summary.className =
+                    "day-dropdown-toggle";
+
+                summary.innerHTML = `
+                    <span>${day}</span>
+                    <span class="day-dropdown-arrow">⌄</span>
+                `;
+
+                summary.addEventListener(
+                    "click",
+                    () => {
+
+                        const wasOpen =
+                            section.classList
+                                .contains(
+                                    "open"
+                                );
+
+                        document
+                            .querySelectorAll(
+                                ".day-dropdown.open"
+                            )
+                            .forEach(
+                                other => {
+
+                                    other.classList.remove(
+                                        "open"
+                                    );
+                                }
+                            );
+
+                        if (!wasOpen) {
+
+                            section.classList.add(
+                                "open"
+                            );
+                        }
+                    }
+                );
+
+                content.className =
+                    "day-dropdown-content";
+
+                section.append(
+                    summary,
+                    content
+                );
+
+            } else {
+
+                const heading =
+                    document.createElement(
+                        "h2"
+                    );
+
+                heading.textContent =
+                    day;
+
+                section.appendChild(
+                    heading
+                );
+            }
 
 
             const exercises =
@@ -942,7 +1013,7 @@ function renderRoutineBuilder(
                     index
                 ) => {
 
-                    section.appendChild(
+                    content.appendChild(
                         buildExerciseCard(
                             day,
                             exercise,
@@ -990,9 +1061,17 @@ function renderRoutineBuilder(
             );
 
 
-            section.appendChild(
+            content.appendChild(
                 addButton
             );
+
+
+            if (!editing) {
+
+                section.appendChild(
+                    content
+                );
+            }
 
 
             appContainer.appendChild(
@@ -1011,7 +1090,9 @@ function renderRoutineBuilder(
         "button";
 
     saveButton.className =
-        "primary-button finish-setup";
+        editing
+            ? "primary-button floating-save-button"
+            : "primary-button finish-setup";
 
 
     saveButton.textContent =
@@ -1054,12 +1135,20 @@ function renderRoutineBuilder(
     );
 
 
-    appContainer.appendChild(
-        saveButton
-    );
-
-
     if (editing) {
+
+        const floatingBar =
+            document.createElement(
+                "div"
+            );
+
+        floatingBar.className =
+            "floating-save-island";
+
+        floatingBar.appendChild(
+            saveButton
+        );
+
 
         const cancelButton =
             document.createElement(
@@ -1070,7 +1159,7 @@ function renderRoutineBuilder(
             "button";
 
         cancelButton.className =
-            "secondary-button";
+            "floating-cancel-button";
 
         cancelButton.textContent =
             "Cancel";
@@ -1082,8 +1171,18 @@ function renderRoutineBuilder(
         );
 
 
-        appContainer.appendChild(
+        floatingBar.appendChild(
             cancelButton
+        );
+
+        appContainer.appendChild(
+            floatingBar
+        );
+
+    } else {
+
+        appContainer.appendChild(
+            saveButton
         );
     }
 }
@@ -1390,6 +1489,38 @@ function renderTarget(
                 >
 
             </div>
+
+            <div class="input-group">
+
+                <label>
+                    Progression Interval
+                </label>
+
+                <select
+                    class="machine-increment"
+                >
+                    <option value="1" ${Number(exercise.machineIncrement || 1) === 1 ? "selected" : ""}>
+                        1 per step
+                    </option>
+
+                    <option value="2.5" ${Number(exercise.machineIncrement) === 2.5 ? "selected" : ""}>
+                        2.5 per step
+                    </option>
+
+                    <option value="5" ${Number(exercise.machineIncrement) === 5 ? "selected" : ""}>
+                        5 per step
+                    </option>
+
+                    <option value="10" ${Number(exercise.machineIncrement) === 10 ? "selected" : ""}>
+                        10 per step
+                    </option>
+                </select>
+
+                <p class="input-help">
+                    Good = +1 step · Easy = +2 steps · Failed = -1 step
+                </p>
+
+            </div>
         `;
 
 
@@ -1542,6 +1673,20 @@ function saveBuilder() {
                         Number(
                             target.value
                         ) || 0;
+                }
+
+
+                const machineIncrement =
+                    card.querySelector(
+                        ".machine-increment"
+                    );
+
+                if (machineIncrement) {
+
+                    exercise.machineIncrement =
+                        Number(
+                            machineIncrement.value
+                        ) || 1;
                 }
 
 
@@ -2028,37 +2173,46 @@ function applyProgression(
         "machine"
     ) {
 
-        let change = 0;
+        const interval =
+            Number(
+                exercise.machineIncrement
+            ) || 1;
+
+        let steps = 0;
 
 
         if (
             rating === "Easy"
         ) {
 
-            change = 2;
+            steps = 2;
         }
 
         else if (
             rating === "Good"
         ) {
 
-            change = 1;
+            steps = 1;
         }
 
         else if (
             rating === "Failed"
         ) {
 
-            change = -1;
+            steps = -1;
         }
 
 
         exercise.target =
             Math.max(
-                1,
+                interval,
                 Number(
                     exercise.target
-                ) + change
+                ) +
+                (
+                    steps *
+                    interval
+                )
             );
 
 
