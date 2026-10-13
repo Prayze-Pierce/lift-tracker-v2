@@ -753,3 +753,131 @@ input::placeholder {
         gap: 6px;
     }
 }
+
+/* =========================================================
+   EDIT LIFTS DROPDOWNS
+========================================================= */
+
+.day-dropdown {
+    overflow: hidden;
+    margin-bottom: 10px;
+    background: #151515;
+    border: 1px solid #292929;
+    border-radius: 16px;
+}
+
+.day-dropdown-toggle {
+    display: flex;
+    width: 100%;
+    min-height: 58px;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 17px;
+    background: transparent;
+    color: #ffffff;
+    border: none;
+    font-size: 18px;
+    font-weight: 850;
+    text-align: left;
+    cursor: pointer;
+}
+
+.day-dropdown-arrow {
+    color: #888888;
+    font-size: 22px;
+    transition: transform 0.16s ease;
+}
+
+.day-dropdown.open .day-dropdown-arrow {
+    transform: rotate(180deg);
+}
+
+.day-dropdown-content {
+    display: none;
+    padding: 0 12px 14px;
+}
+
+.day-dropdown.open .day-dropdown-content {
+    display: block;
+}
+
+
+/* =========================================================
+   MACHINE PROGRESSION SELECT
+========================================================= */
+
+select.machine-increment {
+    width: 100%;
+    min-height: 49px;
+    padding: 12px 13px;
+    background: #0d0d0d;
+    color: #ffffff;
+    border: 1px solid #343434;
+    border-radius: 11px;
+    outline: none;
+    font-size: 16px;
+}
+
+select.machine-increment:focus {
+    background: #101010;
+    border-color: #777777;
+}
+
+.input-help {
+    margin: 8px 2px 0;
+    color: #777777;
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+
+/* =========================================================
+   FLOATING SAVE ISLAND
+========================================================= */
+
+.floating-save-island {
+    position: sticky;
+    z-index: 20;
+    bottom: max(12px, env(safe-area-inset-bottom));
+
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 8px;
+
+    width: calc(100% - 8px);
+    margin: 24px auto 0;
+    padding: 8px;
+
+    background: rgba(24, 24, 24, 0.94);
+    border: 1px solid #383838;
+    border-radius: 18px;
+
+    box-shadow:
+        0 12px 35px
+        rgba(0, 0, 0, 0.45);
+
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+}
+
+.floating-save-button {
+    min-height: 50px;
+}
+
+.floating-cancel-button {
+    min-height: 50px;
+    padding: 0 16px;
+
+    background: transparent;
+    color: #aaaaaa;
+
+    border: none;
+    border-radius: 12px;
+
+    font-weight: 750;
+    cursor: pointer;
+}
+
+.floating-cancel-button:active {
+    background: #252525;
+}
